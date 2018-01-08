@@ -9,6 +9,8 @@ use Akeneo\Component\Batch\Job\JobParameters;
 use Akeneo\Component\Batch\Model\StepExecution;
 use Akeneo\Component\Batch\Step\StepExecutionAwareInterface;
 use Akeneo\Component\StorageUtils\Detacher\ObjectDetacherInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Util\ClassUtils;
 use Pim\Component\Catalog\Builder\ProductBuilderInterface;
 use Pim\Component\Catalog\Model\ProductInterface;
 use Pim\Component\Catalog\Repository\AttributeRepositoryInterface;
@@ -46,6 +48,9 @@ class ProductProcessor implements ItemProcessorInterface, StepExecutionAwareInte
     /** @var BulkMediaFetcher */
     protected $mediaFetcher;
 
+    /** @var ManagerRegistry */
+    protected $managerRegistry;
+
     /**
      * @param NormalizerInterface          $normalizer
      * @param ChannelRepositoryInterface   $channelRepository
@@ -53,6 +58,7 @@ class ProductProcessor implements ItemProcessorInterface, StepExecutionAwareInte
      * @param ProductBuilderInterface      $productBuilder
      * @param ObjectDetacherInterface      $detacher
      * @param BulkMediaFetcher             $mediaFetcher
+     * @param ManagerRegistry              $managerRegistry
      */
     public function __construct(
         NormalizerInterface $normalizer,
@@ -60,7 +66,8 @@ class ProductProcessor implements ItemProcessorInterface, StepExecutionAwareInte
         AttributeRepositoryInterface $attributeRepository,
         ProductBuilderInterface $productBuilder,
         ObjectDetacherInterface $detacher,
-        BulkMediaFetcher $mediaFetcher
+        BulkMediaFetcher $mediaFetcher,
+        ManagerRegistry $managerRegistry = null
     ) {
         $this->normalizer = $normalizer;
         $this->detacher = $detacher;
@@ -68,6 +75,7 @@ class ProductProcessor implements ItemProcessorInterface, StepExecutionAwareInte
         $this->attributeRepository = $attributeRepository;
         $this->productBuilder = $productBuilder;
         $this->mediaFetcher = $mediaFetcher;
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -109,7 +117,15 @@ class ProductProcessor implements ItemProcessorInterface, StepExecutionAwareInte
             );
         }
 
-        $this->detacher->detach($product);
+        /**
+         * This next comparison will raise a conflict on merge on 2.0 because this was already patched. On the merge
+         * from 1.7 to 2.0, please remove the $this->managerRegistry and use the parameter of the 2.0 branch.
+         */
+        if (null !== $this->managerRegistry) {
+            $this->managerRegistry->getManagerForClass(ClassUtils::getClass($product))->clear();
+        } else {
+            $this->detacher->detach($product);
+        }
 
         return $productStandard;
     }
