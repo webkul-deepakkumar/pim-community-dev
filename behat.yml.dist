@@ -127,6 +127,7 @@ acceptance:
         FriendsOfBehat\ContextServiceExtension:
            imports:
                - "tests/Acceptance/Resources/config/behat/services.yml"
+               - "src/Pim/Bundle/CatalogVolumeMonitoringBundle/tests/Acceptance/Resources/config/behat/services.yml"
         FriendsOfBehat\CrossContainerExtension: ~
         FriendsOfBehat\SymfonyExtension:
             kernel:
