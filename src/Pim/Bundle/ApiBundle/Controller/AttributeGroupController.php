@@ -17,6 +17,7 @@ use Pim\Component\Api\Pagination\ParameterValidatorInterface;
 use Pim\Component\Api\Repository\ApiResourceRepositoryInterface;
 use Pim\Component\Catalog\Model\AttributeGroupInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -190,6 +191,10 @@ class AttributeGroupController
      */
     public function createAction(Request $request)
     {
+        if (!$request->isXmlHttpRequest()) {
+            return new RedirectResponse('/');
+        }
+
         $data = $this->getDecodedContent($request->getContent());
 
         $attributeGroup = $this->factory->create();
@@ -215,6 +220,10 @@ class AttributeGroupController
      */
     public function partialUpdateAction(Request $request, $code)
     {
+        if (!$request->isXmlHttpRequest()) {
+            return new RedirectResponse('/');
+        }
+        
         $data = $this->getDecodedContent($request->getContent());
 
         $isCreation = false;
