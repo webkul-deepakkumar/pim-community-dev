@@ -62,12 +62,14 @@ class ProductSaver implements SaverInterface, BulkSaverInterface
 
         $this->eventDispatcher->dispatch(StorageEvents::PRE_SAVE, new GenericEvent($product, $options));
 
-        $this->completenessManager->schedule($product);
-        $this->completenessManager->generateMissingForProduct($product);
         $this->uniqueDataSynchronizer->synchronize($product);
 
         $this->objectManager->persist($product);
         $this->objectManager->flush();
+
+        $this->completenessManager->schedule($product);
+        $this->completenessManager->generateMissingForProduct($product);
+        $this->completenessSaver->save([$product->getCompletenesses()]);
 
         $this->eventDispatcher->dispatch(StorageEvents::POST_SAVE, new GenericEvent($product, $options));
     }
@@ -91,20 +93,20 @@ class ProductSaver implements SaverInterface, BulkSaverInterface
 
         $this->eventDispatcher->dispatch(StorageEvents::PRE_SAVE_ALL, new GenericEvent($products, $options));
 
+        $this->completenessManager->bulkSchedule($products);
+
+        $completenesses = [];
         foreach ($products as $product) {
-            $this->eventDispatcher->dispatch(StorageEvents::PRE_SAVE, new GenericEvent($product, $options));
-            $this->completenessManager->schedule($product);
-            $this->completenessManager->generateMissingForProduct($product);
             $this->uniqueDataSynchronizer->synchronize($product);
 
             $this->objectManager->persist($product);
+
+            $this->completenessManager->generateMissingForProduct($product);
+            $completenesses[] = $product->getCompletenesses();
         }
 
         $this->objectManager->flush();
-
-        foreach ($products as $product) {
-            $this->eventDispatcher->dispatch(StorageEvents::POST_SAVE, new GenericEvent($product, $options));
-        }
+        $this->completenessSaver->save($completenesses);
 
         $this->eventDispatcher->dispatch(StorageEvents::POST_SAVE_ALL, new GenericEvent($products, $options));
     }
