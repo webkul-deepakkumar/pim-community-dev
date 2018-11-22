@@ -13,10 +13,10 @@ use Akeneo\Component\StorageUtils\Exception\UnknownPropertyException;
 use Akeneo\Component\StorageUtils\Factory\SimpleFactoryInterface;
 use Akeneo\Component\StorageUtils\Repository\IdentifiableObjectRepositoryInterface;
 use Akeneo\Component\StorageUtils\Updater\ObjectUpdaterInterface;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
 use Pim\Component\Catalog\Model\AttributeInterface;
 use Pim\Component\Catalog\Model\FamilyVariantInterface;
-use Pim\Component\Catalog\Model\VariantAttributeSetInterface;
 
 /**
  * Update the family variant properties
@@ -190,9 +190,25 @@ class FamilyVariantUpdater implements ObjectUpdaterInterface
                     }
 
                     if (isset($attributeSetData['attributes'])) {
-                        $attributeSet->setAttributes(
-                            $this->getAttributes($attributeSetData['attributes'], $attributeSetData['level'])
+                        $newAttributes = $this->getAttributes(
+                            $attributeSetData['attributes'],
+                            $attributeSetData['level']
                         );
+
+                        $deletedAttributes = $this->getDeletedAttributes(
+                            $attributeSet->getAttributes(),
+                            $newAttributes
+                        );
+
+                        if (count($deletedAttributes)) {
+                            throw new \Exception(sprintf(
+                                'DELETION OF ATTRIBUTES %s',
+                                join(',', array_map(function ($attribute) {
+                                return $attribute->getCode();
+                            }, $deletedAttributes))));
+                        }
+
+                        $attributeSet->setAttributes($newAttributes);
                     }
                 }
                 break;
@@ -241,5 +257,28 @@ class FamilyVariantUpdater implements ObjectUpdaterInterface
 
             return $attribute;
         }, $attributeCodes);
+    }
+
+    /**
+     * @param Collection           $oldAttributes
+     * @param AttributeInterface[] $newAttributes
+     *
+     * @return AttributeInterface[]
+     */
+    private function getDeletedAttributes(Collection $oldAttributes, array $newAttributes)
+    {
+        $result = [];
+        foreach ($oldAttributes as $oldAttribute) {
+            $oldAttributeCode = $oldAttribute->getCode();
+            $isInNewAttributes = array_reduce($newAttributes, function ($acc, $newAttribute) use ($oldAttributeCode) {
+                return $acc || $newAttribute->getCode() === $oldAttributeCode;
+            }, false);
+
+            if ($isInNewAttributes === false) {
+                $result[] = $oldAttribute;
+            }
+        }
+
+        return $result;
     }
 }
