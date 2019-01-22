@@ -6,6 +6,7 @@
 - PIM-7969: fix special chars in PDF export
 - PIM-8008: Fix attributes sort order in PEF.
 - Force the use of ip-regex at 2.1.0 version. Upper version needs nodejs >= 8 but we have to support nodejs >= 6.
+- PIM-7943: Fix duplicate popin mask in family variant edit form
 
 # 2.3.25 (2019-01-17)
 
