@@ -21,8 +21,10 @@ if (!fs.existsSync(sourcePath)) {
 
 const {getModulePaths, createModuleRegistry} = require('./webpack/requirejs-utils');
 const {aliases, config} = getModulePaths(rootDir, __dirname, sourcePath);
+const buildFormExtensions = require('./webpack/build-form-extensions')
 
 createModuleRegistry(Object.keys(aliases), rootDir);
+buildFormExtensions()
 
 const babelPresets = [
   [
