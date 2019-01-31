@@ -54,7 +54,7 @@ function getBundleData(bundlePaths) {
         extensions: extensions.extensions,
         attribute_fields: extensions.attribute_fields,
         aliases: requiredModules.aliases,
-        config: requiresModules.config,
+        config: requiredModules.config,
         styles: {}
     }
 }
