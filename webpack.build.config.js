@@ -4,8 +4,7 @@ const path = require('path')
 const bundlePaths = require(path.join(process.cwd(), './web/js/require-paths'))
 const sourceDirectory = process.cwd()
 const bundleData = getBundleData(bundlePaths, sourceDirectory);
-
-console.log(getBundleData)
+const _ = require('lodash')
 
 module.exports = {
     target: 'web',
@@ -19,8 +18,8 @@ module.exports = {
     devtool: 'source-map',
     resolve: {
       symlinks: false,
-      alias: {},
-      modules: [path.resolve('./web/bundles'), path.resolve('./node_modules')],
+      alias: _.mapKeys(bundleData.aliases, (path, key) => `${key}$`),
+      modules: [path.resolve(sourceDirectory, './web/bundles'), path.resolve(sourceDirectory, './node_modules')],
       extensions: ['.js', '.json', '.ts', '.tsx'],
     },
 }
