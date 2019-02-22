@@ -96,9 +96,12 @@ module.exports = async function(cucumber) {
     })
 
     Then('I should not see the filter weight', async function () {
-        await true
+        const weightFilter = await this.page.$('.filter-item[data-name="family"]')
+
+        assert.equal(weightFilter, null)
     })
 
+    // TODO - Change into decorator for grid
     Then('the grid should contain 4 elements',  async function () {
         await true
     })
