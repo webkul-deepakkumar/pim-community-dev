@@ -3,9 +3,12 @@ const puppeteer = require('puppeteer');
 const extensions = require(`${process.cwd()}/web/js/extensions.json`);
 const fs = require('fs');
 const path = require('path');
+const { answerJson } = require('./tools.js')
 const htmlTemplate = fs.readFileSync(process.cwd() + '/web/test_dist/index.html', 'utf-8');
 const translations = fs.readFileSync(path.join(process.cwd(), './web/js/translation/en_US.js'), 'utf-8');
+const dateContext = require('./request-contracts/date-context.json')
 const userBuilder = new UserBuilder();
+
 module.exports = function(cucumber) {
   const {Before, After, Status} = cucumber;
 
@@ -38,36 +41,35 @@ module.exports = function(cucumber) {
         });
       }
       if (request.url().includes('/rest/user/')) {
-        request.respond({
-          contentType: 'application/json',
-          body: `${JSON.stringify(userBuilder.build())}`,
-        });
+        answerJson(request, userBuilder.build())
       }
 
       if (request.url().includes('/form/extensions')) {
-        request.respond({
-          contentType: 'application/json',
-          body: `${JSON.stringify(extensions)}`,
-        });
+        answerJson(request, extensions)
       }
 
       if (request.url().includes('/js/translation')) {
-        request.respond({
-          contentType: 'application/json',
-          body: `${JSON.stringify(translations)}`,
-        });
+        answerJson(request, translations)
+      }
+
+      if (request.url().includes('/localization/format/date')) {
+        answerJson(request, dateContext)
       }
     });
 
     await this.page.goto(this.baseUrl);
+    await this.page.evaluate(async () => await require('oro/init-layout')());
     await this.page.evaluate(async () => await require('pim/fetcher-registry').initialize());
+    await this.page.evaluate(async () => await require('pim/date-context').initialize());
     await this.page.evaluate(async () => await require('pim/user-context').initialize());
     await this.page.evaluate(async () => await require('pim/init-translator').fetch());
+    await this.page.evaluate(async () => await require('pim/init')());
   });
 
   After(async function(scenario) {
     this.consoleLogs = this.consoleLogs || [];
     if (Status.FAILED === scenario.result.status) {
+      console.log(this)
       if (0 < this.consoleLogs.length) {
         const logMessages = this.consoleLogs.reduce((result, message) => `${result}\nError logged: ${message}`, '');
 

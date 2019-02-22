@@ -37,6 +37,10 @@ const convertDataTable = dataTable => {
   }, {});
 };
 
+const endsWith = (string, target) => {
+  return string.substr(-target.length) === target;
+}
+
 const convertItemTable = dataTable => {
   const [keys, ...items] = dataTable.rawTable;
 
@@ -53,17 +57,17 @@ const convertItemTable = dataTable => {
   });
 };
 
-const renderView = async (page, extension, data) => {
-  return await page.evaluate(volumes => {
+const renderView = async (page, extension, formData) => {
+  return await page.evaluate(({ data, extension}) => {
     const FormBuilder = require('pim/form-builder');
 
-    return FormBuilder.build('pim-catalog-volume-index').then(form => {
-      form.setData(volumes);
+    return FormBuilder.build(extension).then(form => {
+      form.setData(data);
       form.setElement(document.getElementById('app')).render();
 
       return form;
     });
-  }, data);
+  }, { data: formData, extension });
 };
 
 module.exports = {
@@ -74,4 +78,5 @@ module.exports = {
   renderView,
   convertDataTable,
   convertItemTable,
+  endsWith
 };
