@@ -226,7 +226,7 @@ jobs:
           root: ~/
           paths:
               - project/var/coverage
-              -
+
   merge_code_coverage:
       machine:
           enabled: true
@@ -253,7 +253,7 @@ jobs:
           - run:
                 name: Merge Pcov files
                 command: docker-compose exec fpm vendor/bin/phpcov merge --html=./var/coverage/html ./var/coverage
-          - store_test_results:
+          - store_artifacts:
                 path: var/coverage
 
   front_static_acceptance_and_integration:
