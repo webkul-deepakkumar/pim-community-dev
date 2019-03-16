@@ -186,6 +186,15 @@ jobs:
             name: Start containers
             command: docker-compose up -d
       - run:
+            name: Install Pcov extension
+            command: |
+                docker-compose exec fpm sudo apt-get update
+                docker-compose exec fpm sudo apt-get -y install make php7.2-dev php-pear
+                docker-compose exec fpm sudo pecl install pcov
+                docker-compose exec fpm sudo sh -c 'echo "extension=pcov.so" >> /etc/php/7.2/fpm/php.ini'
+                docker-compose exec fpm sudo sh -c 'echo "extension=pcov.so" >> /etc/php/7.2/cli/php.ini'
+                docker-compose restart fpm
+      - run:
             name: Install database
             command: |
                 sleep 25 # wait mysql to be up
@@ -213,6 +222,39 @@ jobs:
           path: var/logs
       - store_artifacts:
           path: var/coverage
+      - persist_to_workspace:
+          root: ~/
+          paths:
+              - project/var/coverage
+              -
+  merge_code_coverage:
+      machine:
+          enabled: true
+          docker_layer_caching: true
+      parallelism: 20
+      steps:
+          - attach_workspace:
+                at: ~/
+          - run:
+                name: Change owner on project dir in order to archive the project into the workspace
+                command: sudo chown -R 1000:1000 ../project
+          - run:
+                name: Start containers
+                command: docker-compose up -d
+          - run:
+                name: Install Pcov extension
+                command: |
+                    docker-compose exec fpm sudo apt-get update
+                    docker-compose exec fpm sudo apt-get -y install make php7.2-dev php-pear
+                    docker-compose exec fpm sudo pecl install pcov
+                    docker-compose exec fpm sudo sh -c 'echo "extension=pcov.so" >> /etc/php/7.2/fpm/php.ini'
+                    docker-compose exec fpm sudo sh -c 'echo "extension=pcov.so" >> /etc/php/7.2/cli/php.ini'
+                    docker-compose restart fpm
+          - run:
+                name: Merge Pcov files
+                command: docker-compose exec fpm vendor/bin/phpcov merge --html=./var/coverage/html ./var/coverage && firefox var/coverage/html/index.html
+          - store_test_results:
+                path: var/coverage
 
   front_static_acceptance_and_integration:
       machine:
