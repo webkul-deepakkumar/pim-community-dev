@@ -278,9 +278,8 @@ jobs:
                 command: |
                     docker-compose exec fpm vendor/bin/phpcov merge --html=./var/coverage/html ./var/coverage
                     tar -czvf var/coverage.tar.gz var/coverage
-                    mv var/coverage.tar.gz var/coverage
           - store_artifacts:
-                path: var/coverage
+                path: var/coverage.tar.gz
 
   front_static_acceptance_and_integration:
       machine:
