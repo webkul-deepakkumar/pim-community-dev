@@ -211,8 +211,8 @@ jobs:
           path: var/tests/screenshots
       - store_artifacts:
           path: var/logs
-      -   store_artifacts:
-              path: var/coverage
+      - store_artifacts:
+          path: var/coverage
 
   front_static_acceptance_and_integration:
       machine:
