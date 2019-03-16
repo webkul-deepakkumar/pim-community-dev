@@ -252,7 +252,7 @@ jobs:
                     docker-compose restart fpm
           - run:
                 name: Merge Pcov files
-                command: docker-compose exec fpm vendor/bin/phpcov merge --html=./var/coverage/html ./var/coverage && firefox var/coverage/html/index.html
+                command: docker-compose exec fpm vendor/bin/phpcov merge --html=./var/coverage/html ./var/coverage
           - store_test_results:
                 path: var/coverage
 
@@ -311,6 +311,9 @@ workflows:
           - back_behat_legacy:
                 requires:
                     - setup
+          - merge_code_coverage:
+                requires:
+                    - back_behat_legacy
 
   nightly:
       triggers:
