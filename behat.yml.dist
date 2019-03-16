@@ -9,7 +9,7 @@ legacy:
                 - Context\FeatureContext:
                     -
                         base_url: 'http://127.0.0.1/'
-                        timeout: 30000
+                        timeout: 50000
                         window_width: 1280
                         window_height: 1024
                 - Context\FixturesContext:
@@ -158,6 +158,7 @@ acceptance:
                 - test.enrichment.enrichment_follow_up_context
             filters:
                 tags: '@acceptance-back'
+            local_coverage_enabled: true
         channel:
             paths:
                 - '%paths.base%/tests/features/channel'
@@ -166,6 +167,7 @@ acceptance:
                 - test.channel.context
             filters:
                 tags: '@acceptance-back'
+            local_coverage_enabled: true
         platform:
             paths:
                 - '%paths.base%/tests/features/platform'
@@ -198,6 +200,7 @@ acceptance:
                 - test.catalog_volume_limits.category_level_context
             filters:
                 tags: '@acceptance-back'
+            local_coverage_enabled: true
     extensions:
         FriendsOfBehat\SymfonyExtension:
             kernel:

@@ -80,6 +80,15 @@ jobs:
                 name: Start containers
                 command: docker-compose up -d fpm
           - run:
+                name: Install Pcov extension
+                command: |
+                    docker-compose exec fpm sudo apt-get update
+                    docker-compose exec fpm sudo apt-get -y install make php7.2-dev php-pear
+                    docker-compose exec fpm sudo pecl install pcov
+                    docker-compose exec fpm sudo sh -c 'echo "extension=pcov.so" >> /etc/php/7.2/fpm/php.ini'
+                    docker-compose exec fpm sudo sh -c 'echo "extension=pcov.so" >> /etc/php/7.2/cli/php.ini'
+                    docker-compose restart fpm
+          - run:
                 name: PhpSpec
                 command: docker-compose exec -T fpm vendor/bin/phpspec run --format=junit > var/tests/phpspec/specs.xml
           - run:
@@ -108,6 +117,10 @@ jobs:
                 path: var/tests
           - store_artifacts:
                 path: var/logs
+          - persist_to_workspace:
+                root: ~/
+                paths:
+                    - project/var/coverage
 
   back_phpunit_integration:
       machine:
@@ -320,25 +333,24 @@ workflows:
           - setup:
                 requires:
                     - wait_for_user_approval
-#          - back_static_and_acceptance:
-#                requires:
-#                    - setup
+          - back_static_and_acceptance:
+                requires:
+                    - setup
 #          - front_static_acceptance_and_integration:
 #                requires:
 #                    - setup
           - back_phpunit_integration:
                 requires:
-                    - setup
+                    - back_static_and_acceptance
           - back_phpunit_end_to_end:
                 requires:
                     - back_phpunit_integration
-#          - back_behat_legacy:
-#                requires:
-#                    - back_phpunit_end_to_end
+          - back_behat_legacy:
+                requires:
+                    - back_phpunit_end_to_end
           - merge_code_coverage:
                 requires:
-#                    - back_behat_legacy
-                    - back_phpunit_end_to_end
+                    - back_behat_legacy
 
   nightly:
       triggers:
