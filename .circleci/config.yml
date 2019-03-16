@@ -289,7 +289,7 @@ jobs:
           - run:
                 name: Merge Pcov files
                 command: |
-                    docker-compose exec fpm vendor/bin/phpcov merge --html=./var/coverage/html ./var/coverage
+                    docker-compose exec fpm php -d memory_limit=6G vendor/bin/phpcov merge --html=./var/coverage/html ./var/coverage
                     tar -czvf var/coverage.tar.gz var/coverage
           - store_artifacts:
                 path: var/coverage.tar.gz
