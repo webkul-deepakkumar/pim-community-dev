@@ -220,8 +220,6 @@ jobs:
           path: var/tests/screenshots
       - store_artifacts:
           path: var/logs
-      - store_artifacts:
-          path: var/coverage
       - persist_to_workspace:
           root: ~/
           paths:
@@ -231,7 +229,6 @@ jobs:
       machine:
           enabled: true
           docker_layer_caching: true
-      parallelism: 20
       steps:
           - attach_workspace:
                 at: ~/
@@ -252,7 +249,10 @@ jobs:
                     docker-compose restart fpm
           - run:
                 name: Merge Pcov files
-                command: docker-compose exec fpm vendor/bin/phpcov merge --html=./var/coverage/html ./var/coverage
+                command: |
+                    docker-compose exec fpm vendor/bin/phpcov merge --html=./var/coverage/html ./var/coverage
+                    tar -czvf var/coverage/coverage.tar.gz var/coverage/html
+                    sudo rm -rf var/coverage/*.cov var/coverage/html
           - store_artifacts:
                 path: var/coverage
 
