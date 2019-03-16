@@ -12,8 +12,17 @@
     bootstrap="./autoload.php">
 
     <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+        <whitelist processUncoveredFilesFromWhitelist="false">
             <directory suffix=".php">../src/Akeneo</directory>
+            <exclude>
+                <directory suffix="Spec.php">../src/Akeneo</directory>
+                <directory suffix="Integration.php">../src/Akeneo</directory>
+                <directory suffix="EndToEnd.php">../src/Akeneo</directory>
+                <directory suffix="Extension.php">../src/Akeneo</directory>
+                <directory suffix="Configuration.php">../src/Akeneo</directory>
+                <directory suffix="Bundle.php">../src/Akeneo</directory>
+                <directory suffix="Pass.php">../src/Akeneo</directory>
+            </exclude>
         </whitelist>
     </filter>
 
