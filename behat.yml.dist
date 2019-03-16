@@ -140,7 +140,7 @@ legacy:
         Liuggio\Fastest\Behat\ListFeaturesExtension\Extension: ~
         BehatRemoteCodeCoverage\RemoteCodeCoverageExtension:
             target_directory: '%paths.base%/var/coverage'
-            split_by: feature
+            split_by: scenario
 
     formatters:
         pretty: true
