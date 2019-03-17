@@ -291,6 +291,7 @@ jobs:
                 command: |
                     docker-compose exec fpm php -d memory_limit=6G vendor/bin/phpcov merge --html=./var/coverage/html ./var/coverage
                     tar -czvf var/coverage.tar.gz var/coverage
+                no_output_timeout: 60m
           - store_artifacts:
                 path: var/coverage.tar.gz
 
