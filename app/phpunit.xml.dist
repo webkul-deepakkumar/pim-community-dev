@@ -20,8 +20,14 @@
     </php>
 
     <groups>
+        <include>
+            <group>critical</group>
+        </include>
         <exclude>
             <group>skip</group>
+        </exclude>
+        <exclude>
+            <group>default</group>
         </exclude>
     </groups>
 
