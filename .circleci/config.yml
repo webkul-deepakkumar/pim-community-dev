@@ -130,7 +130,7 @@ jobs:
           - run:
                 name: PHPunit
                 command: |
-                    docker-compose exec -T fpm ./vendor/bin/phpunit -c app --log-junit var/tests/phpunit/phpunit_$(uuidgen).xml --group critical --filter $TESTFILE
+                    docker-compose exec -T fpm ./vendor/bin/phpunit -c app --log-junit var/tests/phpunit/phpunit_$(uuidgen).xml --group critical
           - store_test_results:
                 path: var/tests/phpunit
           - store_artifacts:
