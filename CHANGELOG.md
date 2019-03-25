@@ -5,6 +5,8 @@
 ## Technical improvement
 
 - DAPI-19: Update `Akeneo\Pim\Enrichment\Component\Product\Normalizer\Indexing\ProductAndProductModel\ProductPropertiesNormalizer` to accept optional normalizers
+- PIM-8235: Do not store duplicate media file
+
 
 ## BC breaks
 
