@@ -82,6 +82,7 @@ jobs:
           - run:
                 name: Install Pcov extension
                 command: |
+                    docker-compose exec fpm sh -c "wget -q https://packages.sury.org/php/apt.gpg -O- | sudo apt-key add -"
                     docker-compose exec fpm sudo apt-get update
                     docker-compose exec fpm sudo apt-get -y install make php7.2-dev php-pear
                     docker-compose exec fpm sudo pecl install pcov
@@ -139,6 +140,7 @@ jobs:
           - run:
                 name: Install Pcov extension
                 command: |
+                    docker-compose exec fpm sh -c "wget -q https://packages.sury.org/php/apt.gpg -O- | sudo apt-key add -"
                     docker-compose exec fpm sudo apt-get update
                     docker-compose exec fpm sudo apt-get -y install make php7.2-dev php-pear
                     docker-compose exec fpm sudo pecl install pcov
@@ -183,6 +185,7 @@ jobs:
           - run:
                 name: Install Pcov extension
                 command: |
+                    docker-compose exec fpm sh -c "wget -q https://packages.sury.org/php/apt.gpg -O- | sudo apt-key add -"
                     docker-compose exec fpm sudo apt-get update
                     docker-compose exec fpm sudo apt-get -y install make php7.2-dev php-pear
                     docker-compose exec fpm sudo pecl install pcov
@@ -227,6 +230,7 @@ jobs:
       - run:
             name: Install Pcov extension
             command: |
+                docker-compose exec fpm sh -c "wget -q https://packages.sury.org/php/apt.gpg -O- | sudo apt-key add -"
                 docker-compose exec fpm sudo apt-get update
                 docker-compose exec fpm sudo apt-get -y install make php7.2-dev php-pear
                 docker-compose exec fpm sudo pecl install pcov
@@ -280,6 +284,7 @@ jobs:
           - run:
                 name: Install Pcov extension
                 command: |
+                    docker-compose exec fpm sh -c "wget -q https://packages.sury.org/php/apt.gpg -O- | sudo apt-key add -"
                     docker-compose exec fpm sudo apt-get update
                     docker-compose exec fpm sudo apt-get -y install make php7.2-dev php-pear
                     docker-compose exec fpm sudo pecl install pcov
