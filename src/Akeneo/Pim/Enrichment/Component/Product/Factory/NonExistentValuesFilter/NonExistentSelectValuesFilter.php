@@ -74,7 +74,7 @@ class NonExistentSelectValuesFilter implements NonExistentValuesFilter
                         // MULTI_SELECT ATTRIBUTE
                         if (is_array($value)) {
                             $multiSelectValues[$channel][$locale] = $this->arrayIntersectCaseInsensitive($value, $caseUnsensitiveOptionsCodes[$attributeCode] ?? []);
-                        // SIMPLE SELECT ATTRIBUTE
+                            // SIMPLE SELECT ATTRIBUTE
                         } else {
                             $simpleSelectValues[$channel][$locale] = ($caseUnsensitiveOptionsCodes[$attributeCode] ?? [])[strtolower($value)] ?? '';
                         }
