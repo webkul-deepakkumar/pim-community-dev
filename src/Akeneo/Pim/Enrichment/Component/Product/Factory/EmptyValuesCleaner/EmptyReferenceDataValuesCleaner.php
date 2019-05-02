@@ -12,6 +12,6 @@ class EmptyReferenceDataValuesCleaner implements EmptyValuesCleaner
     {
         $referenceDataValues = $onGoingCleanedRawValues->nonCleanedValuesOfTypes(AttributeTypes::REFERENCE_DATA_SIMPLE_SELECT, AttributeTypes::REFERENCE_DATA_SIMPLE_SELECT);
 
-
+        return $onGoingCleanedRawValues->addCleanedValuesIndexedByType([]);
     }
 }

@@ -28,5 +28,29 @@ class NonExistentReferenceDataValuesFilter implements NonExistentValuesFilter
             return $onGoingFilteredRawValues;
         }
 
+        $optionCodes = [];
+
+        foreach ($referenceDataValues as $attributeCode => $valueCollection) {
+            foreach ($valueCollection as $values) {
+                foreach ($values['values'] as $channel => $channelValues) {
+                    foreach ($channelValues as $locale => $value) {
+                        if (is_array($value)) {
+                            foreach ($value as $optionCode) {
+                                $optionCodes[$attributeCode][] = strtolower($optionCode);
+                            }
+                        } else {
+                            $optionCodes[$attributeCode][] = strtolower($value);
+                        }
+                    }
+                }
+            }
+        }
+
+        $uniqueOptionCodes = [];
+        foreach ($optionCodes as $attributeCode => $optionCodeForThisAttribute) {
+            $uniqueOptionCodes[$attributeCode] = array_unique($optionCodeForThisAttribute);
+        }
+
+        return $onGoingFilteredRawValues->addFilteredValuesIndexedByType([]);
     }
 }

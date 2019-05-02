@@ -8,7 +8,7 @@ use Akeneo\Pim\Enrichment\Component\Product\Repository\ReferenceDataRepositoryRe
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
-use Akeneo\Pim\Enrichment\Component\Product\Query\GetExistingReferenceDataCodesInterface as GetExistingReferenceDataCodesInterface;
+use Akeneo\Pim\Enrichment\Component\Product\Query\GetExistingReferenceDataCodes as GetExistingReferenceDataCodesInterface;
 
 /**
  * Query to fetch only the existing reference data
