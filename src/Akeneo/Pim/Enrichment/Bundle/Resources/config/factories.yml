@@ -240,6 +240,13 @@ services:
         tags:
             - { name: akeneo.pim.enrichment.factory.non_existent_values_filter }
 
+    akeneo.pim.enrichment.factory.non_existent_values_filter.reference_data:
+        class: 'Akeneo\Pim\Enrichment\Component\Product\Factory\NonExistentValuesFilter\NonExistentReferenceDataValuesFilter'
+        arguments:
+            - '@akeneo.pim.enrichment.product.query.get_existing_reference_data_codes'
+        tags:
+            - { name: akeneo.pim.enrichment.factory.non_existent_values_filter }
+
     ### DATA CLEANER
     akeneo.pim.enrichment.factory.empty_values_cleaner.chained:
         class: 'Akeneo\Pim\Enrichment\Component\Product\Factory\EmptyValuesCleaner\ChainedEmptyValuesCleaner'
@@ -248,5 +255,10 @@ services:
 
     akeneo.pim.enrichment.factory.empty_values_cleaner.select:
         class: 'Akeneo\Pim\Enrichment\Component\Product\Factory\EmptyValuesCleaner\EmptySelectValuesCleaner'
+        tags:
+            - { name: akeneo.pim.enrichment.factory.empty_values_cleaner }
+
+    akeneo.pim.enrichment.factory.empty_values_cleaner.reference_data:
+        class: 'Akeneo\Pim\Enrichment\Component\Product\Factory\EmptyValuesCleaner\EmptyReferenceDataValuesCleaner'
         tags:
             - { name: akeneo.pim.enrichment.factory.empty_values_cleaner }
