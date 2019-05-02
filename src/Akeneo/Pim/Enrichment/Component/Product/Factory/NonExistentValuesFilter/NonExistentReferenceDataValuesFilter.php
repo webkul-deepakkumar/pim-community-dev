@@ -4,7 +4,7 @@
 namespace Akeneo\Pim\Enrichment\Component\Product\Factory\NonExistentValuesFilter;
 
 
-use Akeneo\Pim\Enrichment\Bundle\Product\Query\Sql\GetExistingReferenceDataCodes;
+use Akeneo\Pim\Enrichment\Component\Product\Query\GetExistingReferenceDataCodes;
 use Akeneo\Pim\Structure\Component\AttributeTypes;
 
 class NonExistentReferenceDataValuesFilter implements NonExistentValuesFilter
