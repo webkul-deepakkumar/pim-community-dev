@@ -28,10 +28,11 @@ class NonExistentReferenceDataValuesFilter implements NonExistentValuesFilter
             return $onGoingFilteredRawValues;
         }
 
-        $formattedOptions = $this->getReferenceDataOptionsByCode($referenceDataValues);
-        $filteredCodes = $this->filterByExistingCodes($formattedOptions);
+        $indexedByCode = $this->formatReferenceDataOptionsByCode($referenceDataValues);
+        $filteredCodes = $this->filterByExistingCodes($indexedByCode);
+        $indexedByType = $this->formatReferenceDataOptionsByType($filteredCodes);
 
-        return $onGoingFilteredRawValues->addFilteredValuesIndexedByType([]);
+        return $onGoingFilteredRawValues->addFilteredValuesIndexedByType($indexedByType);
     }
 
     private function filterByExistingCodes(array $formattedOptions): array
@@ -51,7 +52,7 @@ class NonExistentReferenceDataValuesFilter implements NonExistentValuesFilter
         return $existingCodes;
     }
 
-    private function getReferenceDataOptionsByCode(array $referenceDataValues): array
+    private function formatReferenceDataOptionsByCode(array $referenceDataValues): array
     {
         $optionsByCode = [];
 
@@ -74,5 +75,15 @@ class NonExistentReferenceDataValuesFilter implements NonExistentValuesFilter
         }
 
         return $optionsByCode;
+    }
+
+    private function formatReferenceDataOptionsByType(array $indexedByCode): array
+    {
+        $optionsByType = [
+            AttributeTypes::REFERENCE_DATA_SIMPLE_SELECT => [],
+            AttributeTypes::REFERENCE_DATA_MULTI_SELECT => []
+        ];
+
+        return $optionsByType;
     }
 }
