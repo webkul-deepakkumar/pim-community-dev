@@ -28,7 +28,7 @@ final class SqlGetAttributeByCodes implements GetAttributeByCodes
         }
 
         $query = <<<SQL
-        SELECT code, attribute_type
+        SELECT code, attribute_type, properties
         FROM pim_catalog_attribute
         WHERE code IN (:attributeCodes)
 SQL;
@@ -40,7 +40,8 @@ SQL;
         )->fetchAll();
 
         return array_map(function (array $attribute): Attribute {
-            return new Attribute($attribute['code'], $attribute['attribute_type']);
+            $properties = unserialize($attribute['properties']);
+            return new Attribute($attribute['code'], $attribute['attribute_type'], $properties);
         }, $rawResults);
     }
 }

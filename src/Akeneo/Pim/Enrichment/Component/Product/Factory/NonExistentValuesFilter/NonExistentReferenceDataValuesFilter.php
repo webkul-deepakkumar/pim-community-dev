@@ -24,52 +24,57 @@ class NonExistentReferenceDataValuesFilter implements NonExistentValuesFilter
             AttributeTypes::REFERENCE_DATA_MULTI_SELECT
         );
 
-        var_dump('values', $referenceDataValues);
-
         if (empty($referenceDataValues)) {
             return $onGoingFilteredRawValues;
         }
 
-        $formattedOptions = $this->formatReferenceDataOptions($referenceDataValues);
-        $existingCodes = $this->getExistingCodes($formattedOptions);
+        $formatted = $this->getReferenceDataOptionsByCode($referenceDataValues);
+        $existing = $this->filterByExistingCodes($formatted);
 
-        var_dump($existingCodes);
 
         return $onGoingFilteredRawValues->addFilteredValuesIndexedByType([]);
     }
 
     // Need the name of the reference data
-    private function getExistingCodes(array $formattedOptions): array
+    private function filterByExistingCodes(array $formattedOptions): array
     {
-        $existingOptionCodes = $this->getExistingReferenceDataCodes->fromReferenceDataNameAndCodes();
+        var_dump('to iterate', $formattedOptions);
+
+        $existingCodes = [];
+
+        foreach($formattedOptions as $option)
+        {
+            $existingOptionCodes = $this->getExistingReferenceDataCodes->fromReferenceDataNameAndCodes(
+                $option['reference_data_name'],
+                $option['codes']
+            );
+
+            var_dump($existingOptionCodes);
+        }
     }
 
-    private function formatReferenceDataOptions(array $referenceDataValues): array
+    private function getReferenceDataOptionsByCode(array $referenceDataValues): array
     {
         $optionsByCode = [];
 
         foreach ($referenceDataValues as $attributeCode => $valueCollection) {
             foreach ($valueCollection as $values) {
+                $referenceDataName = $values['properties']['reference_data_name'];
+                $optionsByCode[$attributeCode]['reference_data_name'] = $referenceDataName;
                 foreach ($values['values'] as $channel => $channelValues) {
                     foreach ($channelValues as $locale => $value) {
                         if (is_array($value)) {
                             foreach ($value as $optionCode) {
-                                $optionsByCode[$attributeCode][] = strtolower($optionCode);
+                                $optionsByCode[$attributeCode]['codes'][] = strtolower($optionCode);
                             }
                         } else {
-                            $optionsByCode[$attributeCode][] = strtolower($value);
+                            $optionsByCode[$attributeCode]['codes'][] = strtolower($value);
                         }
                     }
                 }
             }
         }
 
-        $uniqueOptionCodes = [];
-
-        foreach ($optionsByCode as $attributeCode => $optionCodeForThisAttribute) {
-            $uniqueOptionCodes[$attributeCode] = array_unique($optionCodeForThisAttribute);
-        }
-
-        return $uniqueOptionCodes;
+        return $optionsByCode;
     }
 }
