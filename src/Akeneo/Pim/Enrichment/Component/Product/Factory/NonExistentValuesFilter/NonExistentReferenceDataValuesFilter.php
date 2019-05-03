@@ -28,29 +28,27 @@ class NonExistentReferenceDataValuesFilter implements NonExistentValuesFilter
             return $onGoingFilteredRawValues;
         }
 
-        $formatted = $this->getReferenceDataOptionsByCode($referenceDataValues);
-        $existing = $this->filterByExistingCodes($formatted);
-
+        $formattedOptions = $this->getReferenceDataOptionsByCode($referenceDataValues);
+        $filteredCodes = $this->filterByExistingCodes($formattedOptions);
 
         return $onGoingFilteredRawValues->addFilteredValuesIndexedByType([]);
     }
 
-    // Need the name of the reference data
     private function filterByExistingCodes(array $formattedOptions): array
     {
-        var_dump('to iterate', $formattedOptions);
-
         $existingCodes = [];
 
-        foreach($formattedOptions as $option)
+        foreach($formattedOptions as $attributeCode => $option)
         {
             $existingOptionCodes = $this->getExistingReferenceDataCodes->fromReferenceDataNameAndCodes(
                 $option['reference_data_name'],
                 $option['codes']
             );
 
-            var_dump($existingOptionCodes);
+            $existingCodes[$attributeCode]['codes'] = array_map('strtolower', $existingOptionCodes);
         }
+
+        return $existingCodes;
     }
 
     private function getReferenceDataOptionsByCode(array $referenceDataValues): array
