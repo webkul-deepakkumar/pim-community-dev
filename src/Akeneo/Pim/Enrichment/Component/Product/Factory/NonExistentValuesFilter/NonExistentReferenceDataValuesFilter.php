@@ -24,11 +24,29 @@ class NonExistentReferenceDataValuesFilter implements NonExistentValuesFilter
             AttributeTypes::REFERENCE_DATA_MULTI_SELECT
         );
 
+        var_dump('values', $referenceDataValues);
+
         if (empty($referenceDataValues)) {
             return $onGoingFilteredRawValues;
         }
 
-        $optionCodes = [];
+        $formattedOptions = $this->formatReferenceDataOptions($referenceDataValues);
+        $existingCodes = $this->getExistingCodes($formattedOptions);
+
+        var_dump($existingCodes);
+
+        return $onGoingFilteredRawValues->addFilteredValuesIndexedByType([]);
+    }
+
+    // Need the name of the reference data
+    private function getExistingCodes(array $formattedOptions): array
+    {
+        $existingOptionCodes = $this->getExistingReferenceDataCodes->fromReferenceDataNameAndCodes();
+    }
+
+    private function formatReferenceDataOptions(array $referenceDataValues): array
+    {
+        $optionsByCode = [];
 
         foreach ($referenceDataValues as $attributeCode => $valueCollection) {
             foreach ($valueCollection as $values) {
@@ -36,10 +54,10 @@ class NonExistentReferenceDataValuesFilter implements NonExistentValuesFilter
                     foreach ($channelValues as $locale => $value) {
                         if (is_array($value)) {
                             foreach ($value as $optionCode) {
-                                $optionCodes[$attributeCode][] = strtolower($optionCode);
+                                $optionsByCode[$attributeCode][] = strtolower($optionCode);
                             }
                         } else {
-                            $optionCodes[$attributeCode][] = strtolower($value);
+                            $optionsByCode[$attributeCode][] = strtolower($value);
                         }
                     }
                 }
@@ -47,10 +65,11 @@ class NonExistentReferenceDataValuesFilter implements NonExistentValuesFilter
         }
 
         $uniqueOptionCodes = [];
-        foreach ($optionCodes as $attributeCode => $optionCodeForThisAttribute) {
+
+        foreach ($optionsByCode as $attributeCode => $optionCodeForThisAttribute) {
             $uniqueOptionCodes[$attributeCode] = array_unique($optionCodeForThisAttribute);
         }
 
-        return $onGoingFilteredRawValues->addFilteredValuesIndexedByType([]);
+        return $uniqueOptionCodes;
     }
 }
